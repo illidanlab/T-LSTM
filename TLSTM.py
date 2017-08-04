@@ -54,8 +54,7 @@ class T_LSTM(object):
         prev_hidden_state, prev_cell = tf.unstack(prev_hidden_memory)
 
         batch_size = tf.shape(concat_input)[0]
-        orig_x = tf.slice(concat_input, [0,1], [batch_size, self.input_dim])
-        x = self.rep_learning(orig_x)
+        x = tf.slice(concat_input, [0,1], [batch_size, self.input_dim])
         t = tf.slice(concat_input, [0,0], [batch_size,1])
 
         # Dealing with time irregularity
