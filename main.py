@@ -4,6 +4,9 @@
 # can be accessed from http://www.emrbots.org/.
 # Inci M. Baytas, 2017
 #
+# How to run: Give the correct path to the data
+# call python main.py 50 512 32 2 1.0
+# For instance; number_epochs: 50, hidden_dim:512, fully_connected dim: 32, output_dim: 2, training dropout prob: 1.0
 
 import tensorflow as tf
 import numpy as np
@@ -49,7 +52,7 @@ def generate_split(input, target, elapse_time, cell_len):
 
 def main(argv):
 
-    S1 = '/home/inci/Documents/KDD_Data/Synt_EHR2.mat'
+    S1 = '../Synt_EHR2.mat'
     m = sio.loadmat(S1)
     General_Patient = m['General_Patient']
     General_Elapsed = m['General_Elapsed']
@@ -58,9 +61,6 @@ def main(argv):
     cell_len = len(General_Patient[0])
     data_train_batches,elapsed_train_batches,labels_train_batches,data_test_batches,elapsed_test_batches,labels_test_batches = generate_split(General_Patient, General_Labels, General_Elapsed, cell_len)
 
-    trial=int(sys.argv[1])
-
-    print('Trial: %d' %(trial+1))
 
     number_train_batches = len(data_train_batches)
     number_test_batches = len(data_test_batches)
@@ -70,18 +70,17 @@ def main(argv):
 
     # set learning parameters
     learning_rate = 1e-3
-    training_epochs = 50
+    training_epochs = int(sys.argv[1])
 
     # set network parameters
     input_dim = data_train_batches[0].shape[2]
-    hidden_dim = 512
-    fc_dim = 32
-    rep_dim = 512
-    output_dim = 2 # Binary labels
-    train_dropout_prob = 1.0
+    hidden_dim = int(sys.argv[2])
+    fc_dim = int(sys.argv[3])
+    output_dim = int(sys.argv[4]) # Binary labels
+    train_dropout_prob = float(sys.argv[5])
 
 
-    lstm = T_LSTM(input_dim, output_dim, hidden_dim, fc_dim, rep_dim)
+    lstm = T_LSTM(input_dim, output_dim, hidden_dim, fc_dim)
 
     cross_entropy, y_pred, y, logits, labels= lstm.get_cost_acc()
     optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cross_entropy) # RMSPropOptimizer
@@ -157,21 +156,3 @@ def main(argv):
 
 if __name__ == "__main__":
    main(sys.argv[1:])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
