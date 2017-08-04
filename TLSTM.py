@@ -11,16 +11,11 @@ class T_LSTM(object):
     def init_bias(self, output_dim, name):
         return tf.get_variable(name,shape=[output_dim],initializer=tf.constant_initializer(0.0))
 
-    def __init__(self, orig_dim, output_dim, hidden_dim, fc_dim, rep_dim):
+    def __init__(self, input_dim, output_dim, hidden_dim, fc_dim):
 
-        self.orig_dim = orig_dim
-        self.input_dim = orig_dim
+        self.input_dim = input_dim
         self.hidden_dim = hidden_dim
 
-        self.rep_dim = rep_dim
-
-        self.Wr = self.init_weights(self.orig_dim, self.input_dim, name='Rep_weight',reg=None)
-        self.br = self.init_bias(self.input_dim, name='Rep_bias')
 
         self.Wi = self.init_weights(self.input_dim, self.hidden_dim, name='Input_Hidden_weight',reg=None)
         self.Ui = self.init_weights(self.hidden_dim, self.hidden_dim, name='Input_State_weight',reg=None)
@@ -48,24 +43,18 @@ class T_LSTM(object):
         self.b_softmax = self.init_bias(output_dim, name='Output_Layer_bias')
 
         # [batch size x seq length x input dim]
-        self.input = tf.placeholder('float', shape=[None, None, self.orig_dim])
+        self.input = tf.placeholder('float', shape=[None, None, self.input_dim])
         self.labels = tf.placeholder('float', shape=[None, output_dim])
         self.time = tf.placeholder('float', shape=[None, None])
         self.keep_prob = tf.placeholder(tf.float32)
 
-
-    # An embedding layer can be added.
-    def rep_learning(self,multi_hot):
-        # rep = tf.nn.relu(tf.matmul(multi_hot, self.Wr) + self.br)
-        rep = multi_hot
-        return rep
 
 
     def T_LSTM_Unit(self, prev_hidden_memory, concat_input):
         prev_hidden_state, prev_cell = tf.unstack(prev_hidden_memory)
 
         batch_size = tf.shape(concat_input)[0]
-        orig_x = tf.slice(concat_input, [0,1], [batch_size, self.orig_dim])
+        orig_x = tf.slice(concat_input, [0,1], [batch_size, self.input_dim])
         x = self.rep_learning(orig_x)
         t = tf.slice(concat_input, [0,0], [batch_size,1])
 
