@@ -99,7 +99,7 @@ class T_LSTM(object):
         ini_state_cell = tf.stack([initial_hidden, initial_hidden])
         # make scan_time [seq_length x batch_size x 1]
         scan_time = tf.reshape(scan_time, [tf.shape(scan_time)[0],tf.shape(scan_time)[1],1])
-        concat_input = tf.concat(2, [scan_time, scan_input]) # [seq_length x batch_size x input_dim+1]
+        concat_input = tf.concat([scan_time, scan_input],2) # [seq_length x batch_size x input_dim+1]
         packed_hidden_states = tf.scan(self.T_LSTM_Unit, concat_input, initializer=ini_state_cell, name='states')
         all_states = packed_hidden_states[:, 0, :, :]
         return all_states
@@ -114,7 +114,8 @@ class T_LSTM(object):
     def get_outputs(self): # Returns all the outputs
         all_states = self.get_states()
         all_outputs = tf.map_fn(self.get_output, all_states)
-        output = tf.reverse(all_outputs, [True, False, False])[0, :, :]
+        output = tf.reverse(all_outputs, [0])[0, :, :] # Compatible with tensorflow 1.2.1
+        # output = tf.reverse(all_outputs, [True, False, False])[0, :, :] # Compatible with tensorflow 0.12.1
         return output
 
     def get_cost_acc(self):
