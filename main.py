@@ -5,8 +5,12 @@
 # Inci M. Baytas, 2017
 #
 # How to run: Give the correct path to the data
-# call python main.py 50 512 32 2 1.0
-# For instance; number_epochs: 50, hidden_dim:512, fully_connected dim: 32, output_dim: 2, training dropout prob: 1.0
+# Data is a list where each element is a 3 dimensional matrix which contains same length sequences.
+# Instead of zero padding, same length sequences are put in the same batch.
+# Example: L is the list containing all the batches with a length of N.
+#          L[0].shape gives [number of samples x sequence length x dimensionality]
+# Call python main.py 50 1028 512 2 0.6
+# For instance; number_epochs: 50, hidden_dim:1028, fully_connected dim: 512, output_dim: 2, training dropout prob: 0.6
 
 import tensorflow as tf
 import numpy as np
@@ -21,7 +25,7 @@ import math
 
 from TLSTM import T_LSTM
 
-
+# To generate test/training splits.
 def generate_split(input, target, elapse_time, cell_len):
     Train_data = []
     Test_data = []
@@ -52,7 +56,7 @@ def generate_split(input, target, elapse_time, cell_len):
 
 def main(argv):
 
-    S1 = '../Synt_EHR2.mat'
+    S1 = 'Synt_EHR2.mat'
     m = sio.loadmat(S1)
     General_Patient = m['General_Patient']
     General_Elapsed = m['General_Elapsed']
@@ -95,6 +99,7 @@ def main(argv):
             # Loop over all batches
             total_cost = 0
             for i in range(number_train_batches):#
+                # batch_xs is [number of patients x sequence length x input dimensionality]
                 batch_xs, batch_ys, batch_ts = data_train_batches[i], labels_train_batches[i], elapsed_train_batches[i]
                 batch_ts = np.reshape(batch_ts, [batch_ts.shape[0],batch_ts.shape[2]])
                 sess.run(optimizer, feed_dict={lstm.input: batch_xs, lstm.labels: batch_ys, lstm.time: batch_ts, lstm.keep_prob:train_dropout_prob})
