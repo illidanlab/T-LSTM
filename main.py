@@ -10,6 +10,7 @@
 # Example: L is the list containing all the batches with a length of N.
 #          L[0].shape gives [number of samples x sequence length x dimensionality]
 # Please refer the example bash script
+# You can use Split0 as the data.
 
 import tensorflow as tf
 import numpy as np
