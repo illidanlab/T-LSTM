@@ -1,0 +1,2 @@
+python main.py 1 "/research/prip-baytasin/Synth_EHR/Split0" 1e-3 50 1.0 128 64 "/research/prip-baytasin/T-LSTM-master/TLSTM/final_model"
+python main.py 0 "/research/prip-baytasin/Synth_EHR/Split0" 128 64 "/research/prip-baytasin/T-LSTM-master/TLSTM/final_model"
