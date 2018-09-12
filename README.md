@@ -10,4 +10,6 @@ Code is compatible with tensorflow version 1.2.1 and Pyhton 2.7.13.
 # Input Format
 An example data format is given where data is stored as a list containing 3 dimensionals tensors such as [number of samples x sequence length x dimensionality].
 
+# Reference
+Inci M. Baytas, Cao Xiao, Xi Zhang, Fei Wang, Anil K. Jain, Jiayu Zhou, "Patient Subtyping via Time-Aware LSTM Networks", KDD, 2017.
 
